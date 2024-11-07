@@ -19,6 +19,7 @@
 class WavOut {
  public:
   WavOut(const char *filename, double sample_rate, int n_samples);
+  ~WavOut();
 
   void write_data(const int32_t *buf, int n);
 

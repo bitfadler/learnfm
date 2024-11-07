@@ -18,8 +18,6 @@
 
 #include "wavout.h"
 
-using namespace std;
-
 void w32le(char *buf, int offset, int32_t val) {
   buf[offset + 0] = val & 0xff;
   buf[offset + 1] = (val >> 8) & 0xff;
@@ -38,6 +36,8 @@ void w4cc(char *buf, int offset, const char *s) {
   }
 }
 
+WavOut::WavOut(const char *filename, double sample_rate, int n_samples)
+: fs ( nullptr)
 {
   char header[44];
   fs = new std::fstream(filename, std::fstream::out | std::fstream::trunc | std::fstream::binary);
@@ -55,6 +55,13 @@ void w4cc(char *buf, int offset, const char *s) {
   w4cc(header, 36, "data");
   w32le(header, 40, 2 * n_samples);
   fs->write(header, 44);
+}
+
+WavOut::~WavOut() {
+  if( fs ) {
+    delete fs;
+    fs = nullptr;
+  }
 }
 
 void WavOut::write_data(const int32_t *buf, int n) {
