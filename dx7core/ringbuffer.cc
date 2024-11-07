@@ -20,6 +20,8 @@
 #include "synth.h"
 #include "ringbuffer.h"
 
+#include <algorithm>
+
 RingBuffer::RingBuffer() {
   rd_ix_ = 0;
   wr_ix_ = 0;
@@ -36,7 +38,7 @@ int RingBuffer::WriteBytesAvailable() {
 int RingBuffer::Read(int size, uint8_t *bytes) {
   int rd_ix = rd_ix_;
   SynthMemoryBarrier();  // read barrier, make sure data is committed before ix
-  unsigned int fragment_size = min((unsigned int)size, kBufSize - rd_ix);
+  const size_t fragment_size = std::min(size, kBufSize - rd_ix);
   memcpy(bytes, buf_ + rd_ix, fragment_size);
   if (size > fragment_size) {
     memcpy(bytes + fragment_size, buf_, size - fragment_size);
@@ -58,8 +60,8 @@ void RingBuffer::Write(const uint8_t *bytes, int size) {
       sleepTime.tv_nsec = 1000000;
       nanosleep(&sleepTime, NULL);
     } else {
-      unsigned int wr_size = min(remaining, space_available);
-      unsigned int fragment_size = min(wr_size, kBufSize - wr_ix);
+      size_t wr_size = std::min(remaining, space_available);
+      size_t fragment_size = std::min(wr_size, kBufSize - wr_ix);
       memcpy(buf_ + wr_ix, bytes, fragment_size);
       if (wr_size > fragment_size) {
         memcpy(buf_, bytes + fragment_size, wr_size - fragment_size);

@@ -34,6 +34,8 @@
 #include "synth_unit.h"
 #include "aligned_buf.h"
 
+#include <algorithm>
+
 char epiano2[] = {
   95, 29, 20, 50, 99, 95, 0, 0, 41, 0, 19, 0, 115, 24, 79, 2, 0,
   95, 20, 20, 50, 99, 95, 0, 0, 0, 0, 0, 0, 3, 0, 99, 2, 0,
@@ -81,7 +83,7 @@ SynthUnit::SynthUnit(RingBuffer *ring_buffer) {
 // optimizing for simplicity of implementation.
 void SynthUnit::TransferInput() {
   size_t bytes_available = ring_buffer_->BytesAvailable();
-  int bytes_to_read = min(bytes_available,
+  size_t bytes_to_read = std::min(bytes_available,
       sizeof(input_buffer_) - input_buffer_index_);
   if (bytes_to_read > 0) {
     ring_buffer_->Read(bytes_to_read, input_buffer_ + input_buffer_index_);
@@ -185,7 +187,7 @@ int SynthUnit::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
     if (buf_size >= 2) {
       // program change
       int program_number = buf[1];
-      ProgramChange(min(program_number, 31));
+      ProgramChange(std::min(program_number, 31));
       char name[11];
       memcpy(name, unpacked_patch_ + 145, 10);
       name[10] = 0;

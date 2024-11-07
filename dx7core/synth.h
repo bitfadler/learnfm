@@ -41,16 +41,6 @@
 #define SynthMemoryBarrier()
 #endif
 
-template<typename T>
-inline static T min(const T& a, const T& b) {
-    return a < b ? a : b;
-}
-
-template<typename T>
-inline static T max(const T& a, const T& b) {
-    return a > b ? a : b;
-}
-
 #ifdef __aarch64__
 #define HAVE_NEON_INTRINSICS
 #include <arm_neon.h>

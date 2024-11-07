@@ -21,6 +21,8 @@
 #include "sin.h"
 #include "lfo.h"
 
+#include <algorithm>
+
 uint32_t Lfo::unit_;
 
 void Lfo::init(double sample_rate) {
@@ -41,7 +43,7 @@ void Lfo::reset(const char params[6]) {
   a = (16 + (a & 15)) << (1 + (a >> 4));
     delayinc_ = unit_ * a;
     a &= 0xff80;
-    a = max(0x80, a);
+    a = std::max(0x80, a);
     delayinc2_ = unit_ * a;
   }
   waveform_ = params[5];

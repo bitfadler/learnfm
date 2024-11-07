@@ -38,9 +38,9 @@ void w4cc(char *buf, int offset, const char *s) {
   }
 }
 
-WavOut::WavOut(const char *filename, double sample_rate, int n_samples) {
+{
   char header[44];
-  fs = new fstream(filename, fstream::out | fstream::trunc | fstream::binary);
+  fs = new std::fstream(filename, std::fstream::out | std::fstream::trunc | std::fstream::binary);
   w4cc(header, 0, "RIFF");
   w32le(header, 4, 36 + 2 * n_samples);
   w4cc(header, 8, "WAVE");

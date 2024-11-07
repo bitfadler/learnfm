@@ -34,7 +34,6 @@
 #include "controllers.h"
 #include "dx7note.h"
 
-using namespace std;
 extern int file_clamped;
 
 void mkdx7notes(double sample_rate) {

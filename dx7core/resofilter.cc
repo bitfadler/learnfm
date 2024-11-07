@@ -31,6 +31,8 @@
 #include "aligned_buf.h"
 #include "resofilter.h"
 
+#include <algorithm>
+
 #ifdef HAVE_NEON
 extern "C"
 void neon_ladder_nl(const int32_t *in, const float *a, int32_t *out, int count,
@@ -57,7 +59,7 @@ ResoFilter::ResoFilter() {
 }
 
 int32_t compute_alpha(int32_t logf) {
-  return min(1 << 24, Freqlut::lookup(logf));
+  return std::min(1 << 24, Freqlut::lookup(logf));
 }
 
 // Some really generic 4x4 matrix multiplication operations, suitable
@@ -123,7 +125,7 @@ static void make_state_transition(float result[20], int32_t f0, int32_t k) {
   int n2 = 4;
   float f = f0 * (1.0 / (1 << (24 + n2)));
   float k_f = k * (1.0 / (1 << 24));
-  k_f = min(k_f, 3.98f);
+  k_f = std::min(k_f, 3.98f);
 
   // these are 5x5 matrices of which we store the bottom 5x4
   // Top row of Jacobian is all zeros
