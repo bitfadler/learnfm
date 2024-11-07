@@ -91,7 +91,7 @@ void SynthUnit::TransferInput() {
   }
 }
 
-void SynthUnit::ConsumeInput(int n_input_bytes) {
+void SynthUnit::ConsumeInput(size_t n_input_bytes) {
   if (n_input_bytes < input_buffer_index_) {
     memmove(input_buffer_, input_buffer_ + n_input_bytes,
         input_buffer_index_ - n_input_bytes);

@@ -22,23 +22,23 @@ class RingBuffer {
   RingBuffer();
 
   // Returns number of bytes available for reading.
-  int BytesAvailable();
+  size_t BytesAvailable();
 
   // Returns number of bytes that can be written without blocking.
-  int WriteBytesAvailable();
+  size_t WriteBytesAvailable();
 
   // Reads bytes. It is the caller's responsibility to make sure that
   // size <= a previous value of BytesAvailable().
-  int Read(int size, uint8_t *bytes);
+  size_t Read(size_t size, uint8_t *bytes);
 
   // Writes bytes into the buffer. If the buffer is full, the method will
   // block until space is available.
-  void Write(const uint8_t *bytes, int size);
+  void Write(const uint8_t *bytes, size_t size);
  private:
-  static const unsigned int kBufSize = 65536;
+  enum : size_t { kBufSize = 65536 };
   uint8_t buf_[kBufSize];
-  volatile unsigned int rd_ix_;
-  volatile unsigned int wr_ix_;
+  volatile size_t rd_ix_;
+  volatile size_t wr_ix_;
 };
 
 #endif  // SYNTH_RINGBUFFER_H_

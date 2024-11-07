@@ -215,7 +215,7 @@ void SseFirFilter::process(const float *in1, float *out, size_t n) {
   __m128 q10 = _mm_set_ps1(0.0);
   __m128 q11 = _mm_set_ps1(0.0);
   __m128i mask = _mm_set_epi32(-1, -1, -1, 0);
-  for (int i = 0; i < nk; i += 4) {
+  for (size_t i = 0; i < nk; i += 4) {
     __m128 q0 = _mm_load_ps(&in[i]);
     __m128 q1 = _mm_load_ps(&k[i]);
     __m128 s = _mm_shuffle_ps(q0, q0, _MM_SHUFFLE(1, 1, 1, 1));
@@ -233,13 +233,13 @@ void SseFirFilter::process(const float *in1, float *out, size_t n) {
   q11 = (__m128)_mm_and_si128((__m128i)q11, mask);
   q11 = _mm_shuffle_ps(q11, q11, _MM_SHUFFLE(0, 3, 2, 1));
   q8 = _mm_add_ps(q8, q11);
-  for (int i = 0; i < n; i += 4) {
+  for (size_t i = 0; i < n; i += 4) {
     q9 = _mm_set_ps1(0.0);
     q10 = _mm_set_ps1(0.0);
     q11 = _mm_set_ps1(0.0);
     const float *inptr = &in[i + 4];
     // inner loop
-    for (int j = 0; j < nk; j += 4) {
+    for (size_t j = 0; j < nk; j += 4) {
       __m128 q0 = _mm_load_ps(&inptr[j]);
       __m128 q1 = _mm_load_ps(&k[j]);
       __m128 s = _mm_shuffle_ps(q0, q0, _MM_SHUFFLE(0, 0, 0, 0));

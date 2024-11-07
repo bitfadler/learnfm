@@ -21,6 +21,9 @@
 #ifndef __ALIGNED_BUF_H
 #define __ALIGNED_BUF_H
 
+#include <cstdint>
+#include <cstddef>
+
 template<typename T, size_t size, size_t alignment = 16>
 class AlignedBuf {
  public:

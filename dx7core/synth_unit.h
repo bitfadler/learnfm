@@ -38,7 +38,7 @@ class SynthUnit {
  private:
   void TransferInput();
 
-  void ConsumeInput(int n_input_bytes);
+  void ConsumeInput(size_t n_input_bytes);
 
   // Choose a note for a new key-down, returns note number, or -1 if
   // none available.
