@@ -37,7 +37,7 @@ void write_data(const int32_t *buf_in, short * buf_out, unsigned int * pos, int 
 // take in a patch #, a note # and a velocity and a sample length and a sample # to lift off a key?
 short * render(unsigned short patch, unsigned char midinote, unsigned char velocity, unsigned int samples, unsigned int keyup) {
   Dx7Note note;
-  short * out = (short *) malloc(sizeof(short) * samples);
+  short * out = (short *) malloc(sizeof(short) * samples + N);
   unsigned int out_ptr = 0;
   note.init(unpacked_patches + (patch * 156), midinote, velocity);
   Controllers controllers;
@@ -63,7 +63,7 @@ short * render(unsigned short patch, unsigned char midinote, unsigned char veloc
 // Render but with 156 bytes of patch data
 short * render_patchdata(char* patch_data, unsigned char midinote, unsigned char velocity, unsigned int samples, unsigned int keyup) {
   Dx7Note note;
-  short * out = (short *) malloc(sizeof(short) * samples);
+  short * out = (short *) malloc(sizeof(short) * samples +N);
   unsigned int out_ptr = 0;
   note.init(patch_data, midinote, velocity);
   Controllers controllers;
