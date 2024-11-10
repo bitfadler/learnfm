@@ -133,7 +133,7 @@ def unpack_packed_patch(p):
     return o
 
 
-def parse_all(do_dedup=True, folder='/Users/bwhitman/outside/learnfm/default'):
+def parse_all(do_dedup=True, folder='./default'):
     all_files = sorted(get_all_syx_files(folder))
     all_patches =[]
     total = 0
@@ -161,8 +161,8 @@ def parse_all(do_dedup=True, folder='/Users/bwhitman/outside/learnfm/default'):
     return dedup
 def convert_compact_to_unpacked():
     # Take a compact.bin and make it unpacked.bin
-    f = bytearray(open("compact.bin").read())
-    o = open("unpacked.bin", "w")
+    f = bytearray(open("./compact.bin").read())
+    o = open("./bin/unpacked.bin", "w")
     num_patches = len(f)/128
     for patch in xrange(num_patches):
         patch_data = f[patch*128:patch*128+128]
@@ -172,8 +172,8 @@ def convert_compact_to_unpacked():
 
 # Writes all the voices to a binary file of 128 x patches, and also the names in ASCII to a txt file.
 def main():
-    compact = open("compact.bin", "wb")
-    names = open("names.txt", "w")
+    compact = open("./bin/compact.bin", "wb")
+    names = open("./bin/names.txt", "w")
     dedup = parse_all()
     for r in dedup.items():
         compact.write(r[1][0])
