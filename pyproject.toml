@@ -8,5 +8,27 @@ name = "dx7"
 version = "1.0.0"
 [tool.setuptools]
 ext-modules = [
-  {name = "dx7", sources = ["dx7core/*.cc"]}
+  {name = "dx7", sources = [
+    "src/dx7/dx7core/dx7note.cc",
+    "src/dx7/dx7core/exp2.cc",
+    "src/dx7/dx7core/fm_core.cc",
+    "src/dx7/dx7core/freqlut.cc",
+    "src/dx7/dx7core/log2.cc",
+    "src/dx7/dx7core/patch.cc",
+    "src/dx7/dx7core/pydx7.cc",
+    "src/dx7/dx7core/ringbuffer.cc",
+    "src/dx7/dx7core/sin.cc",
+    "src/dx7/dx7core/env.cc",
+    "src/dx7/dx7core/fir.cc",
+    "src/dx7/dx7core/fm_op_kernel.cc",
+    "src/dx7/dx7core/lfo.cc",
+    "src/dx7/dx7core/pitchenv.cc",
+    "src/dx7/dx7core/resofilter.cc",
+    "src/dx7/dx7core/sawtooth.cc",
+    "src/dx7/dx7core/synth_unit.cc",
+    "src/dx7/dx7core/wavout.cc"
+    ]}
 ]
+[tool.setuptools.package-data]
+dx7 = ["src/dx7/bin/*.bin"]
+
