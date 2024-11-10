@@ -4,8 +4,6 @@ src/dx7/dx7core/build
 src/dx7/dx7core/dx7
 .vscode
 venv
-
-# to be moved later:
-dist
 *.egg-info
 build
+*.wav
