@@ -1,0 +1,12 @@
+# pyproject.toml
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dx7"
+version = "1.0.0"
+[tool.setuptools]
+ext-modules = [
+  {name = "dx7", sources = ["dx7core/*.cc"]}
+]
