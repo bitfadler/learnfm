@@ -40,7 +40,7 @@ void mkdx7notes(double sample_rate) {
   const int n_samples = 10 * 1024 ;
 
   Dx7Note note;
-  FILE *f = fopen("../compact.bin","rb");
+  FILE *f = fopen("../bin/compact.bin","rb");
   fseek(f, 0, SEEK_END);
   long fsize = ftell(f);
   char * all_patches = (char*)malloc(fsize);
