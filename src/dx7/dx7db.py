@@ -161,7 +161,7 @@ def parse_all(do_dedup=True, folder='./patches'):
     return dedup
 def convert_compact_to_unpacked():
     # Take a compact.bin and make it unpacked.bin
-    f = bytearray(open("./compact.bin").read())
+    f = bytearray(open("./bin/compact.bin").read())
     o = open("./bin/unpacked.bin", "w")
     num_patches = len(f)/128
     for patch in xrange(num_patches):
