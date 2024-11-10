@@ -1,0 +1,8 @@
+include README.md
+include src/dx7/bin/compact.bin
+include src/dx7/bin/unpacked.bin
+include src/dx7/patches
+include src/dx7/docs
+
+
+exclude test
