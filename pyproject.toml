@@ -36,4 +36,6 @@ ext-modules = [
 
 [tool.setuptools.package-data]
 "dx7.bin" = ["*.bin"]
+"dx7.patches" = ["*.syx"]
+"dx7.docs" = ["*.*"]
 
