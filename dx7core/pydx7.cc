@@ -20,7 +20,7 @@
 #include "controllers.h"
 #include "dx7note.h"
 
-char * unpacked_patches;
+char * unpacked_patches = 0;
 
 void write_data(const int32_t *buf_in, short * buf_out, unsigned int * pos, int n) {
   int32_t delta = 0x100;
@@ -34,34 +34,12 @@ void write_data(const int32_t *buf_in, short * buf_out, unsigned int * pos, int 
   *pos = *pos + n;
 }
 
-// take in a patch #, a note # and a velocity and a sample length and a sample # to lift off a key?
-short * render(unsigned short patch, unsigned char midinote, unsigned char velocity, unsigned int samples, unsigned int keyup) {
-  Dx7Note note;
-  short * out = (short *) malloc(sizeof(short) * samples + N);
-  unsigned int out_ptr = 0;
-  note.init(unpacked_patches + (patch * 156), midinote, velocity);
-  Controllers controllers;
-  controllers.values_[kControllerPitch] = 0x2000;
-  int32_t buf[N];
-
-  for (int i = 0; i < samples; i += N) {
-    for (int j = 0; j < N; j++) {
-      buf[j] = 0;
-    }
-    if (i >= keyup) {
-      note.keyup();
-    }
-    note.compute(buf, 0, 0, &controllers);
-    for (int j = 0; j < N; j++) {
-      buf[j] >>= 2;
-    }
-    write_data(buf, out, &out_ptr, N);
-  }
-  return out;
-}
 
 // Render but with 156 bytes of patch data
-short * render_patchdata(char* patch_data, unsigned char midinote, unsigned char velocity, unsigned int samples, unsigned int keyup) {
+short * render_patchdata(const char* patch_data, unsigned char midinote, unsigned char velocity, unsigned int samples, unsigned int keyup) {
+  if( patch_data == 0 )
+    return 0;
+
   Dx7Note note;
   short * out = (short *) malloc(sizeof(short) * samples +N);
   unsigned int out_ptr = 0;
@@ -70,20 +48,29 @@ short * render_patchdata(char* patch_data, unsigned char midinote, unsigned char
   controllers.values_[kControllerPitch] = 0x2000;
   int32_t buf[N];
 
-  for (int i = 0; i < samples; i += N) {
-    for (int j = 0; j < N; j++) {
+  for (unsigned int i = 0; i < samples; i += N) {
+    for (unsigned int j = 0; j < N; j++) {
       buf[j] = 0;
     }
     if (i >= keyup) {
       note.keyup();
     }
     note.compute(buf, 0, 0, &controllers);
-    for (int j = 0; j < N; j++) {
+    for (unsigned int j = 0; j < N; j++) {
       buf[j] >>= 2;
     }
     write_data(buf, out, &out_ptr, N);
   }
   return out;
+}
+
+// take in a patch #, a note # and a velocity and a sample length and a sample # to lift off a key?
+short * render(unsigned short patch, unsigned char midinote, unsigned char velocity, unsigned int samples, unsigned int keyup) {  
+  if( unpacked_patches == 0 )
+    return 0;
+  
+  const char* patch_data = &unpacked_patches[patch * 156];
+  return render_patchdata (patch_data, midinote, velocity, samples, keyup);
 }
 
 void init_synth(void) {
@@ -107,8 +94,11 @@ static PyObject * render_patchdata_wrapper(PyObject *self, PyObject *args) {
   if (! PyArg_ParseTuple(args, "s#iiii", &patch_save, &count, &arg2, &arg3, &arg4, &arg5)) {
     return NULL;
   }
+
   short * result;
-  result = render_patchdata((char*)patch_save, arg2, arg3, arg4, arg5);
+  result = render_patchdata(patch_save, arg2, arg3, arg4, arg5);
+  if( result == 0 )
+    return 0;
 
   // Create a python list of ints (they are signed shorts that come back)
   PyObject* ret = PyList_New(arg4); // arg4 is samples
@@ -116,6 +106,7 @@ static PyObject * render_patchdata_wrapper(PyObject *self, PyObject *args) {
     PyObject* python_int = Py_BuildValue("i", result[i]);
     PyList_SetItem(ret, i, python_int);
   }
+
   free(result);
   return ret;
 }
@@ -130,11 +121,15 @@ static PyObject * render_wrapper(PyObject *self, PyObject *args) {
   arg3 = 70; // velocity
   arg4 = 44100; // samples
   arg5 = 22050; // keyup sample
+
   if (! PyArg_ParseTuple(args, "iiiii", &arg1, &arg2, &arg3, &arg4, &arg5)) {
     return NULL;
   }
+
   short * result;
   result = render(arg1, arg2, arg3, arg4, arg5);
+  if( result == 0 )
+    return 0;
 
   // Create a python list of ints (they are signed shorts that come back)
   PyObject* ret = PyList_New(arg4); // arg4 is samples
@@ -142,6 +137,7 @@ static PyObject * render_wrapper(PyObject *self, PyObject *args) {
     PyObject* python_int = Py_BuildValue("i", result[i]);
     PyList_SetItem(ret, i, python_int);
   }
+
   free(result);
   return ret;
 }
@@ -193,13 +189,14 @@ PyMODINIT_FUNC PyInit_dx7(void)
   // Load them all in
   fread(all_patches, 1, fsize, f);
   fclose(f);
-  int patches = fsize / 128;
-  printf("%d patches\n", patches);
+
+  const int patches = fsize / 128;
   // Patches have to be unpacked to go from 128 bytes to 156 bytes via DX7 spec
   unpacked_patches = (char*) malloc(patches*156);
   for(int i=0;i<patches;i++) {
-    UnpackPatch(all_patches + (i*128), unpacked_patches + (i*156));
+    UnpackPatch(all_patches + (i*128), &unpacked_patches[i*156] );
   }
+
   // Have to call this out as we're in C extern 
   init_synth();
   free(all_patches);
