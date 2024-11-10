@@ -37,11 +37,13 @@ def generate_patch(patch, note) -> array:
     data = dx7.render(patch, note, velocity, samples, keyup_sample)
     return array("i", data)
 
-a = generate_patch(324, 60)
 
-with wave.open("output.wav", mode="wb") as wav_file:
-    wav_file.setnchannels(2)
-    wav_file.setsampwidth(2)
-    wav_file.setframerate(44100)
-    wav_file.writeframes(a)
+if __name__ == "__main__":
+    a = generate_patch(324, 60)
+
+    with wave.open("output.wav", mode="wb") as wav_file:
+        wav_file.setnchannels(2)
+        wav_file.setsampwidth(2)
+        wav_file.setframerate(44100)
+        wav_file.writeframes(a)
 ```
