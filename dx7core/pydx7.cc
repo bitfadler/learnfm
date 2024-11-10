@@ -97,7 +97,6 @@ void init_synth(void) {
 
 static PyObject * render_patchdata_wrapper(PyObject *self, PyObject *args) {
   int arg2, arg3, arg4, arg5;
-
   /* Default values. */
   arg2 = 50; // midi note
   arg3 = 70; // velocity
@@ -181,6 +180,7 @@ extern "C" {
 PyMODINIT_FUNC PyInit_dx7(void)
 {
   // TODO: this file should go into the package directory from setup.py, but that is a PITA 
+  FILE *f = fopen("./bin/compact.bin","rb");
   if( f == nullptr ) {
     printf("dx7: compact.bin not found.\n" );
     return nullptr;
