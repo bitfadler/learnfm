@@ -1,8 +1,8 @@
 *.o
 *.pyc
 patches
-dx7core/build
-dx7core/dx7
+src/dx7core/build
+src/dx7core/dx7
 .vscode
 venv
 
