@@ -1,43 +1,47 @@
 # learnfm
 
+This is a fork of https://github.com/bwhitman/learnfm.
+It improves upon the original work by removing warnings and improving the Python module installation.
+See the original repository for additional info.
 
-## Build the Python & C simulator
+# Building
 
+## GNU/Linux
+To use this module in Python, install it locally
 ```
-cd dx7core
-make
-./dx7 # a test, will create /tmp/foo.wav with all the patches in order if you want
-```
-
-It will sound like https://soundcloud.com/bwhitman/the-31380-unique-voices-of-the-dx7
-
-
-To build the python module, first edit the end of pydx7.cc with your location of `compact.bin` (I will fix this soon, sorry)
-Then:
-
-```
-python setup.py install # will create a python module called dx7
+python -m venv venv
+source ./venv/bin/activate
+pip install .
 ```
 
-The python module renders a mono 44,100Hz 16-bit signed int sound from a patch number (0-31379), a midi note, a velocity and a sample length along with the key up sample position.
+## Other environments
+Untested.
+
+# Usage
+As with the original repo, the module generates sample data from a patch number or data set, a midi note and velocity as well as a total number of samples and the sample number of the key-up event. The sound is being rendered as 44.1 kHz, 16 bit signed array.
+
+## Example
+
+The following example creates a wave file of a given patch: 
 
 ```
->>> import dx7
->>> patch_number = 324 
->>> midi_note = 60
->>> velocity = 99
->>> samples = 44100 * 10 
->>> keyup_sample = 44100 * 5 # when to let the key up
->>> data = dx7.render(patch_number, midi_note, velocity, samples, keyup_sample)
+import dx7
+import wave
+from array import array
+
+def generate_patch(patch, note) -> array:
+    print( f"Exporting patch {patch} (note: {note})")
+    velocity = 99
+    samples = 44100 * 10 
+    keyup_sample = int(samples*0.5)
+    data = dx7.render(patch, note, velocity, samples, keyup_sample)
+    return array("i", data)
+
+a = generate_patch(324, 60)
+
+with wave.open("output.wav", mode="wb") as wav_file:
+    wav_file.setnchannels(2)
+    wav_file.setsampwidth(2)
+    wav_file.setframerate(44100)
+    wav_file.writeframes(a)
 ```
-
-## Creating your own database
-
-If you want your own patch database, download DX7 sysex patches (I used http://dxsysex.com/ ) and put them in a folder called `patches/`. Then run 
-
-```
-python dx7db.py
-```
-
-Will create a database called `compact.bin` and `names.txt` with all of the unique voices from all the banks in the patches (I have 31,380.) 
-The unique-finding-algorithm looks at the data in the voice, not the name. Many voices have different names but the same voice information.
