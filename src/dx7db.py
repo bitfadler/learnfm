@@ -133,7 +133,7 @@ def unpack_packed_patch(p):
     return o
 
 
-def parse_all(do_dedup=True, folder='./default'):
+def parse_all(do_dedup=True, folder='./patches'):
     all_files = sorted(get_all_syx_files(folder))
     all_patches =[]
     total = 0
